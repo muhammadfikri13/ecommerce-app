@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 	"time"
-	"mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo"
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/muhammadfikri13/ecommerce-app/my-backend/database"
+	"my-backend/database"
 )
 
 type SignedDetails struct {

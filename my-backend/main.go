@@ -20,11 +20,12 @@ import (
 	"log"
 	"os"
 
+	"my-backend/controllers"
+	"my-backend/database"
+	"my-backend/middleware"
+	"my-backend/routes"
+
 	"github.com/gin-gonic/gin"
-	"github.com/muhammadfikri13/ecommerce-app/my-backend/controllers"
-	"github.com/muhammadfikri13/ecommerce-app/my-backend/database"
-	"github.com/muhammadfikri13/ecommerce-app/my-backend/middleware"
-	"github.com/muhammadfikri13/ecommerce-app/my-backend/routes"
 )
 
 func main() { // function to start the server

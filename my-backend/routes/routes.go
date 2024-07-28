@@ -1,8 +1,9 @@
 package routes
 
 import (
+	"my-backend/controllers"
+
 	"github.com/gin-gonic/gin"
-	"github.com/muhammadfikri13/ecommerce-app/my-backend/controllers"
 )
 
 func UserRoutes(incomingRoutes *gin.Engine) { // Routing for User and Admin

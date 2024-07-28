@@ -9,8 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/muhammadfikri13/ecommerce-app/my-backend/database"
-	"github.com/muhammadfikri13/ecommerce-app/my-backend/models"
+	"my-backend/database"
+	"my-backend/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
