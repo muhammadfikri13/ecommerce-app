@@ -2,19 +2,43 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"github.com/muhammadfikri13/ecommerce-app/my-backend/database"
 	"github.com/muhammadfikri13/ecommerce-app/my-backend/models"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 )
 
-func HashPassword(password string) string {
+var UserCollection = *mongo.Collection = database.UserData(database.Client, "Users")
+var ProductCollection = *mongo.Collection = database.ProductData(database.Client, "Products")
+var Validate = validator.New()
 
+func HashPassword(password string) string {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err !=  nil {
+		log.Panic(err)
+	}
+	return string(bytes)
 }
 
-func VerifyPassword(userPassword string, givenPassword string) (bool, string) {
+func VerifyPassword(userPassword string, givenPassword string) (bool, string) { // compare the pass in db right or not
+	err := bcrypt.CompareHashAndPassword([]bytee(givenPassword), []bytes(userPassword))
+	valid := true
+	msg := ""
 
+	if err != nil {
+		msg = "Login or Password is incorrect!"
+		valid = false
+	}
+	return valid, msg
 }
 
 func Signup() gin.HandlerFunc {
@@ -125,10 +149,79 @@ func ProductViewerAdmin() gin.HandlerFunc {
 
 }
 
-func searchProduct() gin.HandlerFunc {
+func searchProduct() gin.HandlerFunc { // get product from db
+	return func(c *gin.Context){
+		var productlist []models.Product
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second) // ut
+		defer cancel()
 
+		cursor, err := ProductCollection.Find(ctx, bson.D{{}})
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, "Something went wrong while listing product items")
+			return
+		}
+
+		cursor.All(ctx, &productlist)
+
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		defer cursor.Close()
+
+		if err != cursor.err(); err != nil {
+			log.Println(err)
+			c.IndentedJSON(400, "invalid")
+			return
+		}
+		defer cancel()
+		c.IndentedJSON(200, productlist)
+	}
 }
 
 func searchProductByQuery() gin.HandlerFunc {
+	return func(c *gin.Context){
+		var searchProducts []models.Product // define a slice in struct
+		queryParam := c.Query("name")
 
+		// check wheter it's emptyy
+
+		if queryParam == ""{
+			log.Println("query is empty")
+			c.Header("Content-Type", "application/json")
+			c.JSON(HTTP.StatusNotFound, gin.H{"Error":"Invalid search index"})
+			c.Abort()
+			return
+		}
+
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		defer cancecl()
+
+		searchquerydb, err := ProductCollection.Find(ctx, bson.M{"product_name": bson.M{"$regex": queryParam}})
+
+		if err != nil {
+			c.IndentedJSON(404, "something went wrong while listing product")
+			return
+		}
+
+		searchquerydb.All(ctx, &searchproducts)
+		if err != nil {
+			log.Println(err)
+			c.IndentedJSON(400, "invalid")
+			return
+		}
+
+		defer searchquerydb.Close(ctx)
+
+		if err := searchquerydb.Err(); err != nil {
+			log.Println(err)
+			c.IndentedJSON((400, "invalid request"))
+			return
+		}
+
+		defer cancel()
+		c.IndentedJSON(200, searchProducts)
+	}
 }
