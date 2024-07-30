@@ -4,16 +4,21 @@ import (
 	"log"
 	"os"
 	"time"
-	"go.mongodb.org/mongo-driver/mongo"
-	jwt "github.com/dgrijalva/jwt-go"
+
 	"my-backend/database"
+	jwt "github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	
 )
 
 type SignedDetails struct {
 	Email      string
 	First_Name string
 	Last_Name  string
-	uid        string
+	Uid        string
 	jwt.StandardClaims
 }
 

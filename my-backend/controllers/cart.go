@@ -28,7 +28,7 @@ import (
 		}
 	}
 
-func (app *Application) AddToCart() gin.Handler {
+func (app *Application) AddToCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		productQueryID := c.Query("id") // check for product ID
 		if productQueryID == "" {

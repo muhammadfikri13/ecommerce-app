@@ -11,6 +11,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"my-backend/database"
 	"my-backend/models"
+	generate "my-backend/tokens"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
