@@ -1,17 +1,18 @@
 package tokens
 
 import (
+	"context"
 	"log"
 	"os"
 	"time"
 
 	"my-backend/database"
+
 	jwt "github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	
 )
 
 type SignedDetails struct {
@@ -32,7 +33,7 @@ func TokenGenerator(email string, firstname string, lastname string, uid string)
 		Email:      email,
 		First_Name: firstname,
 		Last_Name:  lastname,
-		uid:        uid,
+		Uid:        uid,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
@@ -50,7 +51,7 @@ func TokenGenerator(email string, firstname string, lastname string, uid string)
 		return "", "", err
 	}
 
-	refreshtoken, err := jwt.NewWithClaims(jwt.SigningMethodHS385, refreshclaims).SignedString([]byte(SECRET_KEY))
+	refreshtoken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshclaims).SignedString([]byte(SECRET_KEY))
 	if err != nil {
 		log.Panic(err)
 		return
@@ -59,7 +60,7 @@ func TokenGenerator(email string, firstname string, lastname string, uid string)
 }
 
 func ValidateToken(signedtoken string) (claims *SignedDetails, msg string) {
-	token, err := jwt.ParseWithClaims(signedtoken, &SignedDetails{}, func(token *jwt.Token)(interface{}, error){
+	token, err := jwt.ParseWithClaims(signedtoken, &SignedDetails{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(SECRET_KEY), nil
 	})
 
@@ -74,7 +75,7 @@ func ValidateToken(signedtoken string) (claims *SignedDetails, msg string) {
 		return
 	}
 
-	claims.ExpiresAt < time.Now().Local()Unix(){
+	if claims.ExpiresAt < time.Now().Local().Unix() {
 		msg = "token is already expired"
 		return
 	}
@@ -97,9 +98,9 @@ func UpdateAllTokens(signedtoken string, signedrefreshtoken string, userid strin
 	opt := options.UpdateOptions{
 		Upsert: &upsert,
 	}
-	UserData.UpdateOne(ctx, filter, bson.D{
-		{Key: "$set", Value: updateobj}
-		}, 
+	_, err := UserData.UpdateOne(ctx, filter, bson.D{
+		{Key: "$set", Value: updateobj},
+	},
 		&opt)
 
 	defer cancel()
