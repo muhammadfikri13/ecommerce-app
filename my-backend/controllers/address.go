@@ -19,7 +19,7 @@ func AddAddress() gin.HandlerFunc {
 		user_id := c.Query("id")
 		if user_id == "" {
 			c.Header("Content-Type", "application/json")
-			c.JSON(http.StatusNotFound, gin.H{"Error": "Invalid Code"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "Invalid Code"})
 			c.Abort()
 			return
 

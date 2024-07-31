@@ -178,7 +178,7 @@ func SearchProduct() gin.HandlerFunc { // get product from db
 			return
 		}
 
-		cursor.All(ctx, &productlist)
+		err = cursor.All(ctx, &productlist)
 
 		if err != nil {
 			log.Println(err)
@@ -222,7 +222,7 @@ func SearchProductByQuery() gin.HandlerFunc {
 			return
 		}
 
-		searchquerydb.All(ctx, &searchProducts)
+		err = searchquerydb.All(ctx, &searchProducts)
 		if err != nil {
 			log.Println(err)
 			c.IndentedJSON(400, "invalid")
